@@ -1,0 +1,13 @@
+Create normal hive table with text format
+  
+  {{
+   create table patient(pid INT, pname STRING, drug STRING,gender STRING,tot_amt INT) ROW FORMAT DELIMITED  FIELDS TERMINATED BY ',' stored as textfile;
+  }}
+  
+ LOAD DATA LOCAL INPATH '/tmp/dataset.txt' INTO TABLE data_part_tr PARTITION (country='IND');
+  
+ create table data_part_tr_parq(pid INT, pname STRING, drug STRING,gender STRING,tot_amt INT)partitioned by(country STRING)row format delimited fields terminated by ',' stored as parquet;
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+insert overwrite table default.data_part_tr_parq partition(country) select pid,pname,drug,gender,tot_amt,country from default.data_part_tr;
